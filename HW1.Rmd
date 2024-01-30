@@ -1,0 +1,176 @@
+---
+title: "HW1_RosairEstevez"
+output: html_document
+date: "2024-01-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Rosairi Estevez - Homework 1 
+# PSY V0500
+
+1. Currently my study group is only me, I am hoping by next class to find 2 people who I can be in a study group with. 
+
+## Lecture 1 Notes Replication 
+
+```{r}
+x <- 1:20
+w <- 1 + sqrt(x)/5
+example1 <- data.frame(x=x, y= x + rnorm(x)*w)
+attach(example1)
+```
+
+```{r}
+fm <- lm(y ~ x)
+summary(fm)
+lrf <- lowess(x, y)
+plot(x, y)
+lines(x, lrf$y)
+abline(0, 1, lty=3)
+abline(coef(fm))
+detach()
+```
+
+```{r}
+load("BRFSS2022_rev.RData")
+brfss22[1:10,1:6]
+attach(brfss22)
+```
+
+```{r}
+summary(brfss22)
+```
+
+```{r}
+summary(SLEPTIM1[X_STATE == "New York"])
+summary(SLEPTIM1[X_STATE == "Alabama"])
+```
+
+```{r}
+round(mean(SLEPTIM1[X_STATE == "New York"], na.rm = TRUE), digits = 2)  
+
+```
+
+```{r}
+round(mean(SLEPTIM1[X_STATE == "Alabama"], na.rm = TRUE), digits = 2) 
+```
+
+```{r}
+mean(MENTHLTH[X_STATE == "New York"], na.rm = TRUE)
+sd(MENTHLTH[X_STATE == "New York"], na.rm = TRUE)
+mean(MENTHLTH[X_STATE == "Ohio"], na.rm = TRUE)
+sd(MENTHLTH[X_STATE == "Ohio"], na.rm = TRUE)
+```
+
+```{r}
+mean(PHYSHLTH[X_STATE == "New York"], na.rm = TRUE)
+sd(PHYSHLTH[X_STATE == "New York"], na.rm = TRUE)
+mean(PHYSHLTH[X_STATE == "Ohio"], na.rm = TRUE)
+sd(PHYSHLTH[X_STATE == "Ohio"], na.rm = TRUE)
+```
+
+
+
+
+## Lecture 1A Notes Replication
+
+1.*Variable Coding*
+
+```{r}
+hist(CHILDREN[(CHILDREN >5) & (CHILDREN < 9)])
+```
+
+```{r}
+summary(GENHLTH)
+summary(CHILDREN)
+```
+
+```{r}
+summary(INCOME3)
+summary(EDUCA)
+```
+
+```{r}
+summary(X_HISPANC)
+```
+
+2. *Packages*
+
+```{r}
+install.packages("tidyverse")
+install.packages("plyr")
+```
+
+```{r}
+library(plyr)
+library(tidyverse)
+```
+
+3. *Factors*
+```{r}
+summary(X_AGEG5YR)
+summary(INCOME3)
+```
+
+```{r}
+summary(RENTHOM1)
+summary(EMPLOY1)
+```
+
+```{r}
+ddply(brfss22, .(PHYSHLTH), summarize, mean = round(mean(MENTHLTH, na.rm = TRUE), 2), sd = round(sd(MENTHLTH, na.rm = TRUE), 2), n_obsv = length(is.na(MENTHLTH) == FALSE) )
+```
+
+```{r}
+ddply(brfss22, .(PHYSHLTH), summarize, mental90th = quantile(MENTHLTH,probs = 0.9, na.rm = TRUE), mental10th = quantile(MENTHLTH,probs = 0.1, na.rm = TRUE), n_obs = length(is.na(MENTHLTH) == FALSE) )
+
+```
+
+```{r}
+table(GENHLTH,EMTSUPRT)
+xtabs(~GENHLTH + EMTSUPRT)
+```
+
+```{r}
+prop.table(table(GENHLTH,EMTSUPRT))
+```
+
+```{r}
+mean(MENTHLTH[(EDUCA == "College 4 years or more (College graduate)")], na.rm = TRUE)
+```
+
+
+4. *Alternatives*
+
+```{r}
+restrict1 <- as.logical(EDUCA == "College 4 years or more (College graduate)")
+```
+
+```{r}
+dat_subset1 <- subset(brfss22, restrict1)
+```
+
+```{r}
+mean(MENTHLTH, na.rm = TRUE)
+```
+
+```{r}
+mean(MENTHLTH[(EDUCA == "College 4 years or more (College graduate)")], na.rm = TRUE)
+
+
+restrict1 <- as.logical(EDUCA == "College 4 years or more (College graduate)")
+dat_subset1 <- subset(brfss22, restrict1)
+
+detach()
+attach(dat_subset1)
+
+mean(SLEPTIM1, na.rm = TRUE)
+
+detach()
+```
+
+## Interest & Surprises
+
+There were a few surprises for me in the data, I didn't realize how much information it really has, and it was interesting to look into the variables of mental and physical health which are interests I want to further look into. When comparing physical and mental health with states such as New York and Alabama, further comparing sleep time, it was interesting to see those differing means and sd. 
