@@ -1,0 +1,170 @@
+---
+title: "HW2"
+output: html_document
+date: "2024-02-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. *My study group is Chris and Isamari*
+
+
+```{r}
+xtabs(~ brfss22$ADDEPEV3 + brfss22$CHECKUP1)
+```
+
+```{r}
+prop.table(table(brfss22$ADDEPEV3, brfss22$CHECKUP1))
+```
+```{r}
+xtabs(~ brfss22$ADDEPEV3 + brfss22$X_HISPANC)
+```
+
+```{r}
+prop.table(table(brfss22$ADDEPEV3, brfss22$X_HISPANC))
+```
+
+```{r}
+xtabs(~ brfss22$ADDEPEV3 + brfss22$AVEDRNK3)
+```
+
+```{r}
+prop.table(table(brfss22$ADDEPEV3, brfss22$AVEDRNK3))
+```
+
+
+```{r}
+NN <- length(brfss22$ADDEPEV3)
+set.seed(12345)
+restrict_1 <- (runif(NN) < 0.1) # use just 10% 
+summary(restrict_1)
+```
+
+```{r}
+brfss_small <- subset(brfss22, restrict_1)
+```
+```{r}
+ggplot(brfss_small, aes(x = ADDEPEV3, fill = X_HISPANC)) + geom_bar()
+```
+
+```{r}
+ggplot(brfss_small, aes(x = ADDEPEV3, fill = CHECKUP1)) + geom_bar()
+```
+
+```{r}
+ggplot(brfss_small, aes(x = ADDEPEV3, fill = CHECKUP1)) + geom_bar(position = "fill")
+```
+
+```{r}
+ggplot(brfss_small, aes(x = ADDEPEV3, fill = ALCDAY4)) + geom_bar(position = "fill")
+```
+
+
+```{r}
+brfss_small_m <- subset(brfss_small,brfss_small$SEXVAR == "Male")
+brfss_small_f <- subset(brfss_small,brfss_small$SEXVAR == "Female")
+```
+
+
+```{r}
+ggplot(brfss_small_f, aes(x = ADDEPEV3, fill = ALCDAY4)) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+
+```{r}
+ggplot(brfss_small_m, aes(x = ADDEPEV3, fill = ALCDAY4)) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+
+```{r}
+ggplot(brfss_small_f, aes(x = ADDEPEV3, fill = X_PRACE2 )) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+```{r}
+ggplot(brfss_small_m, aes(x = ADDEPEV3, fill = X_PRACE2 )) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+
+```{r}
+ggplot(brfss_small_m, aes(x = ADDEPEV3, fill = X_HISPANC )) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+
+```{r}
+ggplot(brfss_small_f, aes(x = ADDEPEV3, fill = X_HISPANC )) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+
+
+```{r}
+ggplot(brfss_small_f, aes(x = X_URBSTAT, fill = ADDEPEV3 )) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+```{r}
+ggplot(brfss_small_m, aes(x = X_URBSTAT, fill = ADDEPEV3 )) + geom_bar(position = "fill") + scale_fill_viridis_d(option="rocket")
+```
+
+
+```{r}
+brfss22$Age_midpt <- fct_recode(brfss22$X_AGEG5YR, "21" = "Age 18 to 24",
+                                "27" = "Age 25 to 29", "32" = "Age 30 to 34",
+                                "37" = "Age 35 to 39", "42" = "Age 40 to 44",
+                                "47" = "Age 45 to 49", "52" = "Age 50 to 54",
+                                "57" = "Age 55 to 59", "62" = "Age 60 to 64",
+                                "67" = "Age 65 to 69", "72" = "Age 70 to 74",
+                                "77" = "Age 75 to 79", "82" = "Age 80 or older",
+                                NULL = "Dont know/Refused/Missing")
+
+summary(brfss22$Age_midpt)
+```
+
+```{r}
+brfss22$Age_midpt <- as.numeric(levels(brfss22$Age_midpt))[brfss22$Age_midpt]
+summary(brfss22$Age_midpt) 
+```
+
+```{r}
+d_alc <- brfss_small %>% drop_na(AVEDRNK3)
+```
+
+```{r}
+d_alc_age <- brfss_small %>% drop_na(AVEDRNK3,Age_midpt) 
+```
+
+```{r}
+ggplot(d_alc, aes(x = AVEDRNK3) ) + geom_histogram()
+```
+```{r}
+alc_gg <- ggplot(d_alc, aes(x = AVEDRNK3) )
+```
+
+```{r}
+alc_gg + geom_histogram(color = "red", fill = "green")
+```
+
+
+```{r}
+alc_age_gg <- ggplot(d_alc_age, aes(AVEDRNK3, Age_midpt)) 
+
+```
+
+```{r}
+alc_age_gg + geom_point(alpha = 0.05)
+```
+
+```{r}
+alc_age_gg + geom_point(alpha = 0.05) + geom_density2d()
+```
+
+```{r}
+alc_age_gg +   stat_density_2d(aes(fill = stat(level)), geom = 'polygon') +
+  scale_fill_viridis_c(name = "density") +
+  geom_point(shape = '.')
+```
+
+```{r}
+alc_age_gg + stat_density_2d(aes(fill = after_stat(density)), geom = 'raster', contour = FALSE) +       
+  scale_fill_viridis_c() +
+  coord_cartesian(expand = FALSE) +
+  geom_point(shape = '.', col = 'white')
+```
+
+## *Summary & Interests* 
+
+I found it interesting to compare depression diagnosis with alcohol drinking, how often individuals went for general health checkups, and location. It was surprising and not surprising to see the effects of not going to doctor checkups and the likelihood of being diagnosed with depression or not. Not surprising because of course it's the doctor and they always asks a patient mental health related questions, and suprising because one would expect it to have a higher correlation with another variable such as race or Hispanic/Latino groups. I also expected more differences between male and female groups when comparing the variables, but it was interesting nonetheless. 
+
