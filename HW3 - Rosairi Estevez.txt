@@ -1,0 +1,106 @@
+---
+title: "HW 3"
+output: html_document
+date: "2024-02-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Rosairi Estevez, HW3 - PSY V0500
+
+## 1. Chris and Isamari 
+
+## Possible Protocol 1 : Roll dice once, if result is 4 then dice is unfair, if it rolls any other number then it is fair. Probability of it to be judged unfair is 1 out of 6 (16.67%), and fair would be 5 out of 6 (83.33%) (This is only using one dice not two)
+
+## Possible Protocol 2 : Roll dice 20 times, if dice results in 6 more than 5 times out of the 20 rolls, then the dice is unfair. The probability of this happening is 1 out of 6 for each of the 20 rolls (3.33%) If getting the number 6 around 5 times from 20 rolls is fairly low, then I would imagine it'd be unusual as well to get 1 more or less than 5, and that goes for 2 more or less, 3, and so on.
+
+## Possible Protocol 3: Roll dice 100 times, if dice results in 6 more than 20 times then it is judged as unfair. (16.67%)
+
+
+## Experimental Protocol : If dice results in 6 more than 5 times, then the dice is unfair. If dice results in 
+
+
+# **Modified (unfair) dice (my dice)** = This is the dice I modified, I filed down each side and burned the side with 5 on it. 
+
+```{r}
+unfairdice_results <- c(3, 2, 1, 2, 3, 3, 4, 6, 3, 1, 6, 2, 6, 6, 6, 5, 2, 5, 4, 4)
+```
+
+```{r}
+if_come_up_6_unfair <- as.numeric(dice_results == 6)
+```
+
+
+True = 1
+False = 0 
+
+```{r}
+if_come_up_6_unfair
+```
+
+
+```{r}
+mean(if_come_up_6_unfair)
+```
+
+```{r}
+sd(if_come_up_6_unfair)
+```
+
+```{r}
+summary(if_come_up_6_unfair)
+```
+
+```{r}
+how_many_rolls <- 20
+```
+
+```{r}
+t.test(if_come_up_6_unfair)
+```
+
+Reject the null hypothesis - false positive, as the p value for the unfair dice data is less than the threshold of significance. Therefore, there is sig. difference in the outcome of the modified dice. 
+
+
+#**Fair dice** = dice rolls computed by R
+
+```{r}
+fairdice_results <- sample(1:6, how_many_rolls, replace = TRUE)
+```
+
+```{r}
+fairdice_results
+```
+
+
+```{r}
+if_come_up_6_fair <- as.numeric(fairdice_results == 6)
+
+```
+
+True = 1
+False = 0 
+
+```{r}
+if_come_up_6_fair
+```
+
+```{r}
+mean(if_come_up_6_fair)
+```
+
+```{r}
+sd(if_come_up_6_fair)
+```
+
+```{r}
+summary(if_come_up_6_fair)
+```
+
+```{r}
+t.test(if_come_up_6_fair)
+```
+
+Fail to reject the null - false negative, as the p value is above the significance threshold. Therefore with the fair dice there is no sig. difference in the outcomes of the fair dice. 
