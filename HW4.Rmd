@@ -1,0 +1,280 @@
+---
+title: "Lab 3/HW 4"
+output: html_document
+date: "2024-02-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Study Group
+Chris and Isamari
+
+## Tristate + BMI 
+
+```{r}
+library(ggplot2)
+```
+
+
+```{r}
+library(tidyverse)
+```
+```{r}
+brfss22$Age_midpt <- fct_recode(brfss22$X_AGEG5YR, "21" = "Age 18 to 24",
+                                "27" = "Age 25 to 29", "32" = "Age 30 to 34",
+                                "37" = "Age 35 to 39", "42" = "Age 40 to 44",
+                                "47" = "Age 45 to 49", "52" = "Age 50 to 54",
+                                "57" = "Age 55 to 59", "62" = "Age 60 to 64",
+                                "67" = "Age 65 to 69", "72" = "Age 70 to 74",
+                                "77" = "Age 75 to 79", "82" = "Age 80 or older",
+                                NULL = "Dont know/Refused/Missing")
+
+```
+
+```{r}
+brfss22$Age_midpt <- as.numeric(levels(brfss22$Age_midpt))[brfss22$Age_midpt]
+```
+
+
+```{r}
+select_tristate <- (brfss22$X_STATE == "New York") | (brfss22$X_STATE == "New Jersey") | (brfss22$X_STATE == "Connecticut")
+brfss_tristate <- subset(brfss22,select_tristate)
+```
+
+```{r}
+choose_tristate <- (brfss22$X_STATE == "Alabama") | (brfss22$X_STATE == "Texas") | (brfss22$X_STATE == "Ohio")
+brfss_tristate2 <- subset(brfss22,choose_tristate)
+```
+
+
+```{r}
+p_tri <- ggplot(data = brfss_tristate,
+                mapping = aes(x = Age_midpt,
+                              y = X_BMI5))
+
+```
+
+```{r}
+p_tri + geom_smooth()
+```
+
+```{r}
+p_tri2 <- ggplot(data = brfss_tristate2,
+                mapping = aes(x = Age_midpt,
+                              y = X_BMI5))
+```
+
+```{r}
+p_tri2 + geom_smooth()
+```
+
+
+```{r}
+p_tri + geom_jitter(width = 2.5, height = NULL, alpha = 0.05)
+```
+
+```{r}
+p_tri <- ggplot(data = brfss_tristate,
+                mapping = aes(x = Age_midpt,
+                              y = X_BMI5,
+                              color = X_STATE,
+                              fill = X_STATE))
+```
+
+
+```{r}
+p_tri2 <- ggplot(data = brfss_tristate2,
+                mapping = aes(x = Age_midpt,
+                              y = X_BMI5,
+                              color = X_STATE,
+                              fill = X_STATE))
+```
+
+```{r}
+p_tri2 + geom_smooth()
+```
+
+
+
+```{r}
+p_tri + geom_smooth()
+```
+
+
+```{r}
+p_tri3 <- ggplot(data = brfss_tristate,
+                mapping = aes(x = Age_midpt,
+                              y = X_BMI5,
+                              color = X_STATE,
+                              fill = X_STATE))
+```
+
+```{r}
+p_tri3 + geom_point (color = "red") +
+  geom_smooth(method = "loess") +
+  scale_x_log10()
+```
+
+```{r}
+psw <- ggplot(data = brfss_tristate,
+              mapping = aes(x = SLEPTIM1,
+                            y = Height_inches,
+                            color = X_STATE,
+                            fill = X_STATE))
+```
+
+```{r}
+psw + geom_point() +
+  geom_smooth(method = "loess") +
+  scale_x_log10()
+```
+
+
+
+## Adverse Childhood Experiences
+
+
+```{r}
+ACEdidntask <- (as.numeric(is.na(brfss22$ACEDEPRS)) + 
+                        as.numeric(is.na(brfss22$ACEDRINK)) +
+                        as.numeric(is.na(brfss22$ACEDRUGS)) +
+                        as.numeric(is.na(brfss22$ACEPRISN)) +
+                        as.numeric(is.na(brfss22$ACEDIVRC)) +
+                        as.numeric(is.na(brfss22$ACEPUNCH)) +
+                        as.numeric(is.na(brfss22$ACEHURT1)) +
+                        as.numeric(is.na(brfss22$ACESWEAR)) +
+                        as.numeric(is.na(brfss22$ACETOUCH)) )
+```
+
+
+
+```{r}
+select_ACE <- (ACEdidntask == 0)
+```
+
+```{r}
+brfss_ACE <- subset(brfss22, select_ACE)
+
+```
+
+
+## ACE ALC AND DRUGS
+
+```{r}
+brfss_ACE$ACEDRINK_recode <- fct_recode(brfss_ACE$ACEDRINK, 
+                                        "Y" = "Yes, Adverse Childhood Exper, lived with someone who was a problem drinker or alcoholic",
+                                "N" = "No", 
+                                NULL = "dont know not sure",
+                                NULL = "refused"
+                            
+)
+
+summary(brfss_ACE$ACEDRINK_recode)
+
+```
+
+
+
+```{r}
+brfss_ACE$ACEDRUGS_recode <- fct_recode(brfss_ACE$ACEDRUGS, 
+                                        "Y" = "Yes, Adverse Childhood Exper, lived with someone who used illegal street drugs or who abused prescription medications",
+                                "N" = "No", 
+                                NULL = "dont know not sure",
+                                NULL = "refused"
+                            
+)
+
+summary(brfss_ACE$ACEDRUGS_recode)
+```
+
+
+
+```{r}
+xtabs(~ brfss_ACE$ACEDRINK_recode + brfss_ACE$ACEDRUGS_recode)
+```
+
+
+People who experienced ACE with alcohol and drugs - 6.71%
+People who experienced ACE with only alcohol and no drugs - 17.30%
+People who experienced ACE with only drugs and no alcohol - 3.14%
+People who experienced neither - 71.94%
+
+
+```{r}
+ACEdidntask <- (as.numeric(is.na(brfss22$ACEDEPRS)) + 
+                        as.numeric(is.na(brfss22$ACEDRINK)) +
+                        as.numeric(is.na(brfss22$ACEDRUGS)) +
+                        as.numeric(is.na(brfss22$ACEPRISN)) +
+                        as.numeric(is.na(brfss22$ACEDIVRC)) +
+                        as.numeric(is.na(brfss22$ACEPUNCH)) +
+                        as.numeric(is.na(brfss22$ACEHURT1)) +
+                        as.numeric(is.na(brfss22$ACESWEAR)) +
+                        as.numeric(is.na(brfss22$ACETOUCH)) )
+select_ACE <- (ACEdidntask == 0) # with zero missing values for any of ACE questions
+```
+
+
+## ACE DEPRESSION AND DRUGS
+
+```{r}
+levels(brfss_ACE$ACEDEPRS)
+```
+
+
+
+```{r}
+brfss_ACE$ACEDEPRS_recode <- fct_recode(brfss_ACE$ACEDEPRS, 
+                                        "Y" = "Yes, Adverse Childhood Exper, lived with someone who was depressed, mentally ill, or suicidal",
+                                "N" = "No", 
+                                NULL = "dont know not sure",
+                                NULL = "refused"
+                            
+)
+
+summary(brfss_ACE$ACEDEPRS_recode)
+```
+
+```{r}
+xtabs(~ brfss_ACE$ACEDEPRS_recode + brfss_ACE$ACEDRUGS_recode)
+```
+People who had ACE with drugs and depressed family member - 5.97%
+People who had ACE with drugs but no depressed family member - 3.88%
+People who had ACE with depressed family member but no drugs - 12.56%
+People who had neither ACE - 77.13%
+
+
+## ACE DIVORCE AND DEPRESSION
+
+```{r}
+levels(brfss_ACE$ACEDIVRC)
+```
+
+```{r}
+brfss_ACE$ACEDIVRC_recode <- fct_recode(brfss_ACE$ACEDIVRC, 
+                            "Y" = "Yes, Adverse Childhood Exper, parents separated or divorced",
+                                "N" = "No", 
+                                NULL = "dont know not sure",
+                                NULL = "refused", 
+                                NULL = "parents never married"
+                            
+)
+
+summary(brfss_ACE$ACEDIVRC_recode)
+```
+
+```{r}
+xtabs(~ brfss_ACE$ACEDEPRS_recode + brfss_ACE$ACEDIVRC_recode)
+```
+People who had ACE with divorce/separation or family member with depression - 8.72%
+People who had ACE with divorce/separation but no depressed family member - 17.17%
+People who had ACE with depressed family member but no separation/divorce - 9.83%
+People who had neither - 64.27%
+
+```{r}
+
+summary(brfss_ACE)
+```
+
+
